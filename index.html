@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fight Club — Training Program</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --black: #0a0a0a; --panel: #141414; --border: #272727;
+    --red: #c0392b; --red-dim: #7a1e15;
+    --text: #e8e0d5; --text-dim: #5a5450; --text-mid: #9a908a;
+    --mono: 'DM Mono', monospace; --sans: 'DM Sans', sans-serif; --display: 'Bebas Neue', sans-serif;
+  }
+  html { background: var(--black); }
+  body { background: var(--black); color: var(--text); font-family: var(--sans); font-weight: 300; line-height: 1.6; min-height: 100vh; padding: 0 0 80px; overflow-x: hidden; }
+  body::before { content: ''; position: fixed; inset: 0; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E"); pointer-events: none; z-index: 999; }
+
+/* HERO */
+.hero { padding: 44px 20px 36px; border-bottom: 1px solid var(–border); position: relative; overflow: hidden; }
+.hero::after { content: ‘FC’; font-family: var(–display); font-size: clamp(100px, 35vw, 260px); line-height: 1; color: transparent; -webkit-text-stroke: 1px #1c1c1c; position: absolute; right: -10px; bottom: -10px; pointer-events: none; letter-spacing: -4px; }
+.hero-label { font-family: var(–mono); font-size: 10px; letter-spacing: 0.25em; color: var(–red); text-transform: uppercase; margin-bottom: 10px; }
+.hero-title { font-family: var(–display); font-size: clamp(52px, 14vw, 96px); line-height: 0.88; color: var(–text); margin-bottom: 20px; position: relative; z-index: 1; }
+.hero-meta { display: grid; grid-template-columns: 1fr 1fr; gap: 12px 24px; position: relative; z-index: 1; }
+.meta-item { display: flex; flex-direction: column; gap: 2px; }
+.meta-label { font-family: var(–mono); font-size: 9px; letter-spacing: 0.2em; color: var(–text-dim); text-transform: uppercase; }
+.meta-value { font-family: var(–mono); font-size: 12px; color: var(–text-mid); }
+
+/* NAV */
+.nav-bar { position: sticky; top: 0; z-index: 100; background: rgba(10,10,10,0.97); backdrop-filter: blur(16px); border-bottom: 1px solid var(–border); display: flex; overflow-x: auto; scrollbar-width: none; padding: 0 4px; }
+.nav-bar::-webkit-scrollbar { display: none; }
+.nav-tab { font-family: var(–mono); font-size: 9px; letter-spacing: 0.12em; text-transform: uppercase; color: var(–text-dim); padding: 14px 14px 12px; cursor: pointer; border: none; border-bottom: 2px solid transparent; white-space: nowrap; transition: color 0.2s, border-color 0.2s; background: none; flex-shrink: 0; }
+.nav-tab:hover { color: var(–text-mid); }
+.nav-tab.active { color: var(–text); border-bottom-color: var(–red); }
+
+/* DAY SECTION */
+.day-section { display: none; padding: 28px 16px 48px; animation: fadeIn 0.25s ease; }
+.day-section.visible { display: block; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+
+.day-header { margin-bottom: 20px; padding-bottom: 16px; border-bottom: 1px solid var(–border); }
+.day-number { font-family: var(–mono); font-size: 10px; letter-spacing: 0.3em; color: var(–red); display: block; margin-bottom: 2px; text-transform: uppercase; }
+.day-name { font-family: var(–display); font-size: clamp(40px, 12vw, 72px); line-height: 0.92; color: var(–text); letter-spacing: 0.02em; margin-bottom: 10px; }
+.day-badge { display: inline-block; font-family: var(–mono); font-size: 9px; letter-spacing: 0.12em; color: var(–text-dim); border: 1px solid var(–border); padding: 5px 10px; text-transform: uppercase; }
+
+.focus-strip { background: var(–panel); border-left: 3px solid var(–red); padding: 12px 14px; margin-bottom: 24px; font-family: var(–mono); font-size: 11px; color: var(–text-mid); font-style: italic; line-height: 1.6; }
+.section-label { font-family: var(–mono); font-size: 9px; letter-spacing: 0.3em; color: var(–text-dim); text-transform: uppercase; margin: 24px 0 10px; padding-bottom: 8px; border-bottom: 1px solid var(–border); }
+
+/* EXERCISE CARD */
+.ex-card { background: var(–panel); border: 1px solid var(–border); border-radius: 2px; margin-bottom: 8px; overflow: hidden; cursor: pointer; }
+.ex-card-header { display: flex; align-items: center; justify-content: space-between; padding: 14px 16px; gap: 12px; }
+.ex-card-left { display: flex; flex-direction: column; gap: 4px; flex: 1; min-width: 0; }
+.ex-card-name { font-family: var(–sans); font-size: 14px; font-weight: 500; color: var(–text); }
+.ex-card-muscle { font-family: var(–mono); font-size: 10px; color: var(–text-dim); }
+.ex-card-right { display: flex; flex-direction: column; align-items: flex-end; gap: 5px; flex-shrink: 0; }
+.ex-card-sets { font-family: var(–mono); font-size: 13px; color: var(–red); white-space: nowrap; }
+.ex-toggle { font-size: 9px; color: var(–text-dim); transition: transform 0.2s; line-height: 1; user-select: none; }
+.ex-card.open .ex-toggle { transform: rotate(180deg); }
+.ex-card-body { display: none; padding: 0 16px 16px; border-top: 1px solid var(–border); }
+.ex-card.open .ex-card-body { display: block; }
+.ex-card-desc { font-family: var(–sans); font-size: 13px; color: var(–text-mid); line-height: 1.65; padding-top: 12px; }
+
+/* CARDIO */
+.cardio-block { background: var(–panel); border: 1px solid var(–border); padding: 20px 16px; margin-bottom: 20px; }
+.cardio-title { font-family: var(–display); font-size: 24px; letter-spacing: 0.05em; color: var(–text); margin-bottom: 16px; }
+.cardio-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 16px; }
+.cardio-stat { border-left: 2px solid var(–red-dim); padding-left: 12px; }
+.cardio-stat-label { font-family: var(–mono); font-size: 9px; letter-spacing: 0.2em; color: var(–text-dim); text-transform: uppercase; margin-bottom: 3px; }
+.cardio-stat-value { font-family: var(–mono); font-size: 14px; color: var(–text); }
+.cardio-why { font-family: var(–sans); font-size: 13px; color: var(–text-mid); line-height: 1.65; border-top: 1px solid var(–border); padding-top: 14px; }
+
+/* TIP */
+.tip-box { display: flex; gap: 12px; align-items: flex-start; background: rgba(192,57,43,0.07); border: 1px solid var(–red-dim); padding: 14px 16px; margin-top: 24px; }
+.tip-icon { font-family: var(–display); font-size: 18px; color: var(–red); line-height: 1.2; flex-shrink: 0; }
+.tip-text { font-family: var(–mono); font-size: 11px; color: var(–text-mid); line-height: 1.65; font-style: italic; }
+</style>
+
+</head>
+<body>
+
+<div class="hero">
+  <div class="hero-label">Phase 1 — Foundation</div>
+  <div class="hero-title">FIGHT<br>CLUB<br>TRAINING</div>
+  <div class="hero-meta">
+    <div class="meta-item"><span class="meta-label">Frequency</span><span class="meta-value">4 days / week</span></div>
+    <div class="meta-item"><span class="meta-label">Split</span><span class="meta-value">Push · Pull · Legs · Metcon</span></div>
+    <div class="meta-item"><span class="meta-label">Goal</span><span class="meta-value">Lean, Dense, Athletic</span></div>
+    <div class="meta-item"><span class="meta-label">Target</span><span class="meta-value">Brad Pitt — Fight Club</span></div>
+  </div>
+</div>
+
+<nav class="nav-bar">
+  <button class="nav-tab active" onclick="showDay('mon',this)">MON · Push</button>
+  <button class="nav-tab" onclick="showDay('tue',this)">TUE · Pull</button>
+  <button class="nav-tab" onclick="showDay('wed',this)">WED · Rest</button>
+  <button class="nav-tab" onclick="showDay('thu',this)">THU · Legs</button>
+  <button class="nav-tab" onclick="showDay('fri',this)">FRI · Rest</button>
+  <button class="nav-tab" onclick="showDay('sat',this)">SAT · Metcon</button>
+  <button class="nav-tab" onclick="showDay('sun',this)">SUN · Off</button>
+</nav>
+
+<!-- MONDAY -->
+
+<section class="day-section visible" id="day-mon">
+  <div class="day-header">
+    <span class="day-number">Monday</span>
+    <div class="day-name">PUSH</div>
+    <span class="day-badge">Chest · Shoulders · Triceps · Core</span>
+  </div>
+  <div class="focus-strip">Primary stimulus: horizontal and vertical push strength. Build chest width and shoulder mass — the visual foundation of the Fight Club silhouette.</div>
+
+  <div class="section-label">Chest</div>
+  <div class="ex-card" onclick="toggleCard(this)">
+    <div class="ex-card-header">
+      <div class="ex-card-left"><span class="ex-card-name">Barbell Bench Press</span><span class="ex-card-muscle">Chest · Triceps · Front Delt</span></div>
+      <div class="ex-card-right"><span class="ex-card-sets">4 × 6–8</span><span class="ex-toggle">▼</span></div>
+    </div>
+    <div class="ex-card-body"><p class="ex-card-desc">The primary strength builder. Heavy compound lift that overloads the entire pushing chain. Low-rep range builds dense, functional muscle — not puffy bulk. This is the cornerstone of the Monday session.</p></div>
+  </div>
+  <div class="ex-card" onclick="toggleCard(this)">
+    <div class="ex-card-header">
+      <div class="ex-card-left"><span class="ex-card-name">Incline DB Press</span><span class="ex-card-muscle">Upper Chest · Front Delt</span></div>
+      <div class="ex-card-right"><span class="ex-card-sets">3 × 8–10</span><span class="ex-toggle">▼</span></div>
+    </div>
+    <div class="ex-card-body"><p class="ex-card-desc">Targets the upper pec that creates the chest-to-shoulder shelf. Dumbbells allow greater range of motion and correct side-to-side imbalances the barbell masks.</p></div>
+  </div>
+  <div class="ex-card" onclick="toggleCard(this)">
+    <div class="ex-card-header">
+      <div class="ex-card-left"><span class="ex-card-name">Cable Fly</span><span class="ex-card-muscle">Chest (stretch focus)</span></div>
+      <div class="ex-card-right"><span class="ex-card-sets">3 × 12–15</span><span class="ex-toggle">▼</span></div>
+    </div>
+    <div class="ex-card-body"><p class="ex-card-desc">Isolates the pec under constant cable tension throughout the full arc. Higher reps drive blood flow and metabolic stress — the pump that reinforces muscle-mind connection.</p></div>
+  </div>
+
+  <div class="section-label">Shoulders</div>
+  <div class="ex-card" onclick="toggleCard(this)">
+    <div class="ex-card-header">
+      <div class="ex-card-left"><span class="ex-card-name">Seated Shoulder Press</span><span class="ex-card-muscle">All 3 Delt Heads · Triceps</span></div>
+      <div class="ex-card-right"><span class="ex-card-sets">3 × 8–10</span><span class="ex-toggle">▼</span></div>
+    </div>
+    <div class="ex-card-body"><p class="ex-card-desc">Vertical compound lift for overhead shoulder strength. Seated removes lower-body momentum, forcing true shoulder drive. Critical for building the wide-shoulder silhouette.</p></div>
+  </div>
+  <div class="ex-card" onclick="toggleCard(this)">
+    <div class="ex-card-header">
+      <div class="ex-card-left"><span class="ex-card-name">Lateral Raises</span><span class="ex-card-muscle">Lateral (Side) Delt</span></div>
+      <div class="ex-card-right"><span class="ex-card-sets">4 × 15–20</span><span class="ex-toggle">▼</span></div>
+    </div>
+    <div class="ex-card-body"><p class="ex-card-desc">The single most impactful exercise for shoulder width. The lateral head only grows with direct isolation. High volume and high reps are essential — this muscle responds to accumulation, not heavy weight.</p></div>
+  </div>
+
+  <div class="section-label">Triceps</div>
+  <div class="ex-card" onclick="toggleCard(this)">
+    <div class="ex-card-header">
+      <div class="ex-card-left"><span class="ex-card-name">Triceps Rope Pushdown</span><span class="ex-card-muscle">Triceps (all heads)</span></div>
+      <div class="ex-card-right"><span class="ex-card-sets">3 × 12–15</span><span class="ex-toggle">▼</span></div>
+    </div>
+    <div class="ex-card-body"><p class="ex-card-desc">Isolation finisher after the triceps have been pre-fatigued by pressing. The rope allows hands to separate at the bottom, maximising the contraction. Keeps arms defined and tight.</p></div>
+  </div>
+
+  <div class="section-label">Core</div>
+  <div class="ex-card" onclick="toggleCard(this)">
+    <div class="ex-card-header">
+      <div class="ex-card-left"><span class="ex-card-name">Hanging Leg Raise</span><span class="ex-card-muscle">Lower Abs · Hip Flexors</span></div>
+      <div class="ex-card-right"><span class="ex-card-sets">3 × 10–15</span><span class="ex-toggle">▼</span></div>
+    </div>
+    <div class="ex-card-body"><p class="ex-card-desc">Builds the lower abdominal wall — the hardest section to develop. Hanging also decompresses the spine after heavy pressing. No swinging — controlled descent is everything.</p></div>
+  </div>
+  <div class="ex-card" onclick="toggleCard(this)">
+    <div class="ex-card-header">
+      <div class="ex-card-left"><span class="ex-card-name">Plank</span><span class="ex-card-muscle">Deep Core · Glutes · Shoulders</span></div>
+      <div class="ex-card-right"><span class="ex-card-sets">3 × 45–60s</span><span class="ex-toggle">▼</span></div>
+    </div>
+    <div class="ex-card-body"><p class="ex-card-desc">Anti-extension core stability. Builds structural tension in the midsection that keeps the waist tight and supports all compound lifts. Not glamorous — structural armor.</p></div>
+  </div>
+  <div class="tip-box"><span class="tip-icon">!</span><span class="tip-text">Rest 90–120s between compound sets. Rest 60s between isolation sets. Strength on the compounds, accumulation on the isolations — don't conflate the two.</span></div>
+</section>
+
+<!-- TUESDAY -->
+
+<section class="day-section" id="day-tue">
+  <div class="day-header">
+    <span class="day-number">Tuesday</span>
+    <div class="day-name">PULL</div>
+    <span class="day-badge">Back · Biceps · Rear Delt · Core</span>
+  </div>
+  <div class="focus-strip">Primary stimulus: vertical and horizontal pulling strength. Build the V-taper back and thick biceps that define the Fight Club upper body from the rear.</div>
+
+  <div class="section-label">Back</div>
+  <div class="ex-card" onclick="toggleCard(this)">
+    <div class="ex-card-header">
+      <div class="ex-card-left"><span class="ex-card-name">Pull-ups / Lat Pulldown</span><span class="ex-card-muscle">Lats · Biceps · Rear Delt</span></div>
+      <div class="ex-card-right"><span class="ex-card-sets">4 × 6–8</span><span class="ex-toggle">▼</span></div>
+    </div>
+    <div class="ex-card-body"><p class="ex-card-desc">The primary vertical pull. Pull-ups are the gold standard. Use lat pulldown only when pull-ups can't be completed with good form. Width of the lats — and the V-taper — comes from here.</p></div>
+  </div>
+  <div class="ex-card" onclick="toggleCard(this)">
+    <div class="ex-card-header">
+      <div class="ex-card-left"><span class="ex-card-name">Barbell Row</span><span class="ex-card-muscle">Mid-Back · Lats · Rear Delt</span></div>
+      <div class="ex-card-right"><span class="ex-card-sets">4 × 6–8</span><span class="ex-toggle">▼</span></div>
+    </div>
+    <div class="ex-card-body"><p class="ex-card-desc">The horizontal counterpart to the bench press. Builds thickness through the mid-back and rhomboids — the muscle that makes the back look 3D and carved. Full retraction at the top every rep.</p></div>
+  </div>
+  <div class="ex-card" onclick="toggleCard(this)">
+    <div class="ex-card-header">
+      <div class="ex-card-left"><span class="ex-card-name">One-Arm DB Row</span><span class="ex-card-muscle">Lats · Mid-Back</span></div>
+      <div class="ex-card-right"><span class="ex-card-sets">3 × 10–12</span><span class="ex-toggle">▼</span></div>
+    </div>
+    <div class="ex-card-body"><p class="ex-card-desc">Unilateral rowing with greater range of motion than the barbell. Each side trained independently catches asymmetries. Pull the elbow past the hip for full lat engagement.</p></div>
+  </div>
+  <div class="ex-card" onclick="toggleCard(this)">
+    <div class="ex-card-header">
+      <div class="ex-card-left"><span class="ex-card-name">Face Pulls</span><span class="ex-card-muscle">Rear Delt · Rotator Cuff · Traps</span></div>
+      <div class="ex-card-right"><span class="ex-card-sets">3 × 15–20</span><span class="ex-toggle">▼</span></div>
+    </div>
+    <div class="ex-card-body"><p class="ex-card-desc">Non-negotiable for shoulder health. Counteracts the internal rotation built by heavy bench pressing. Keeps the shoulder joint stable and adds rear delt roundness visible from the back.</p></div>
+  </div>
+
+  <div class="section-label">Biceps</div>
+  <div class="ex-card" onclick="toggleCard(this)">
+    <div class="ex-card-header">
+      <div class="ex-card-left"><span class="ex-card-name">Barbell Curl</span><span class="ex-card-muscle">Biceps (long + short head)</span></div>
+      <div class="ex-card-right"><span class="ex-card-sets">3 × 8–10</span><span class="ex-toggle">▼</span></div>
+    </div>
+    <div class="ex-card-body"><p class="ex-card-desc">The primary bicep mass builder. Controlled negative (3 seconds down) maximises mechanical tension — that's where the growth stimulus lives. Don't swing the weight.</p></div>
+  </div>
+  <div class="ex-card" onclick="toggleCard(this)">
+    <div class="ex-card-header">
+      <div class="ex-card-left"><span class="ex-card-name">Hammer Curl</span><span class="ex-card-muscle">Brachialis · Brachioradialis</span></div>
+      <div class="ex-card-right"><span class="ex-card-sets">2 × 12</span><span class="ex-toggle">▼</span></div>
+    </div>
+    <div class="ex-card-body"><p class="ex-card-desc">Neutral grip hits the brachialis beneath the bicep, pushing it up and creating arm thickness. Also builds forearm size — arms that look strong from every angle.</p></div>
+  </div>
+
+  <div class="section-label">Core</div>
+  <div class="ex-card" onclick="toggleCard(this)">
+    <div class="ex-card-header">
+      <div class="ex-card-left"><span class="ex-card-name">Cable Crunch</span><span class="ex-card-muscle">Upper Abs · Rectus Abdominis</span></div>
+      <div class="ex-card-right"><span class="ex-card-sets">3 × 12–15</span><span class="ex-toggle">▼</span></div>
+    </div>
+    <div class="ex-card-body"><p class="ex-card-desc">One of the only weighted ab exercises that allows progressive overload. The cable maintains tension through the full arc — unlike floor crunches which go slack at the top.</p></div>
+  </div>
+  <div class="ex-card" onclick="toggleCard(this)">
+    <div class="ex-card-header">
+      <div class="ex-card-left"><span class="ex-card-name">Bicycle Crunch</span><span class="ex-card-muscle">Obliques · Upper Abs</span></div>
+      <div class="ex-card-right"><span class="ex-card-sets">3 × 20</span><span class="ex-toggle">▼</span></div>
+    </div>
+    <div class="ex-card-body"><p class="ex-card-desc">Activates the obliques through rotation — the muscle that creates waist definition and the diagonal lines of a shredded midsection. Slow and deliberate, not a speed exercise.</p></div>
+  </div>
+  <div class="tip-box"><span class="tip-icon">!</span><span class="tip-text">On pull-ups: dead hang at the bottom, chest to the bar at the top. If you can do more than 8 reps clean, add a weight belt. Strength on the compound pulls is the #1 driver of back development.</span></div>
+</section>
+
+<!-- WEDNESDAY -->
+
+<section class="day-section" id="day-wed">
+  <div class="day-header">
+    <span class="day-number">Wednesday</span>
+    <div class="day-name">REST + WALK</div>
+    <span class="day-badge">Active Recovery · Fat Loss</span>
+  </div>
+  <div class="focus-strip">No intensity today. The walk is a deliberate tool — not a warmup. LISS at this specification burns fat without elevating cortisol or competing with muscle recovery.</div>
+  <div class="cardio-block">
+    <div class="cardio-title">INCLINE TREADMILL WALK</div>
+    <div class="cardio-grid">
+      <div class="cardio-stat"><div class="cardio-stat-label">Duration</div><div class="cardio-stat-value">30–45 min</div></div>
+      <div class="cardio-stat"><div class="cardio-stat-label">Speed</div><div class="cardio-stat-value">5.5–6.5 km/h</div></div>
+      <div class="cardio-stat"><div class="cardio-stat-label">Incline</div><div class="cardio-stat-value">6–10%</div></div>
+      <div class="cardio-stat"><div class="cardio-stat-label">Target HR</div><div class="cardio-stat-value">120–135 bpm</div></div>
+      <div class="cardio-stat"><div class="cardio-stat-label">Zone</div><div class="cardio-stat-value">Zone 2 (LISS)</div></div>
+    </div>
+    <div class="cardio-why">The incline recruits more glute and hamstring than flat walking. Staying in Zone 2 means you're burning predominantly fat as fuel. Going above 135 bpm shifts to glycolytic energy and competes with recovery. Don't run. Sustained, low-stress output is the point.</div>
+  </div>
+  <div class="tip-box"><span class="tip-icon">!</span><span class="tip-text">Use the walk productively — podcast, language lesson, or decompress. Avoid this within 2 hours of your heaviest meal for maximum fat oxidation.</span></div>
+</section>
+
+<!-- THURSDAY -->
+
+<section class="day-section" id="day-thu">
+  <div class="day-header">
+    <span class="day-number">Thursday</span>
+    <div class="day-name">LEGS + CORE</div>
+    <span class="day-badge">Quads · Hamstrings · Glutes · Calves · Core</span>
+  </div>
+  <div class="focus-strip">The most demanding session of the week. Leg training releases the most anabolic hormones of any session — it makes your whole body grow, not just your legs. Don't skip it.</div>
+
+  <div class="section-label">Quads & Glutes</div>
+  <div class="ex-card" onclick="toggleCard(this)">
+    <div class="ex-card-header">
+      <div class="ex-card-left"><span class="ex-card-name">Back Squat</span><span class="ex-card-muscle">Quads · Glutes · Core</span></div>
+      <div class="ex-card-right"><span class="ex-card-sets">4 × 6–8</span><span class="ex-toggle">▼</span></div>
+    </div>
+    <div class="ex-card-body"><p class="ex-card-desc">The king of all lifts. Builds raw lower-body mass and drives systemic anabolic hormone output. Heavy compound squatting is one of the strongest signals for whole-body growth. Depth matters — below parallel.</p></div>
+  </div>
+  <div class="ex-card" onclick="toggleCard(this)">
+    <div class="ex-card-header">
+      <div class="ex-card-left"><span class="ex-card-name">Romanian Deadlift</span><span class="ex-card-muscle">Hamstrings · Glutes · Lower Back</span></div>
+      <div class="ex-card-right"><span class="ex-card-sets">3 × 8–10</span><span class="ex-toggle">▼</span></div>
+    </div>
+    <div class="ex-card-body"><p class="ex-card-desc">Hip-hinge with a controlled stretch on the hamstrings at the bottom. Builds the dense hamstring sweep that balances quad-dominant squat work. Feel the stretch — don't chase the weight.</p></div>
+  </div>
+  <div class="ex-card" onclick="toggleCard(this)">
+    <div class="ex-card-header">
+      <div class="ex-card-left"><span class="ex-card-name">Leg Press</span><span class="ex-card-muscle">Quads · Glutes</span></div>
+      <div class="ex-card-right"><span class="ex-card-sets">3 × 10–12</span><span class="ex-toggle">▼</span></div>
+    </div>
+    <div class="ex-card-body"><p class="ex-card-desc">Higher quad volume after squats without taxing the lower back. Foot position controls emphasis — higher = more glute, lower = more quad. Never lock out hard at the top.</p></div>
+  </div>
+
+  <div class="section-label">Hamstrings & Calves</div>
+  <div class="ex-card" onclick="toggleCard(this)">
+    <div class="ex-card-header">
+      <div class="ex-card-left"><span class="ex-card-name">Leg Curl</span><span class="ex-card-muscle">Hamstrings (isolated)</span></div>
+      <div class="ex-card-right"><span class="ex-card-sets">3 × 10–12</span><span class="ex-toggle">▼</span></div>
+    </div>
+    <div class="ex-card-body"><p class="ex-card-desc">Trains the hamstring in knee flexion — a function the RDL alone doesn't cover. Both hip extension and knee flexion must be trained for complete hamstring development and knee health.</p></div>
+  </div>
+  <div class="ex-card" onclick="toggleCard(this)">
+    <div class="ex-card-header">
+      <div class="ex-card-left"><span class="ex-card-name">Standing Calf Raise</span><span class="ex-card-muscle">Gastrocnemius · Soleus</span></div>
+      <div class="ex-card-right"><span class="ex-card-sets">4 × 15–20</span><span class="ex-toggle">▼</span></div>
+    </div>
+    <div class="ex-card-body"><p class="ex-card-desc">Calves are mostly slow-twitch — they respond to high reps and frequency. Standing position emphasises the gastrocnemius (the visible "diamond" calf). Pause at the bottom stretch for 1 second each rep.</p></div>
+  </div>
+
+  <div class="section-label">Core</div>
+  <div class="ex-card" onclick="toggleCard(this)">
+    <div class="ex-card-header">
+      <div class="ex-card-left"><span class="ex-card-name">Hanging Leg Raise</span><span class="ex-card-muscle">Lower Abs · Hip Flexors</span></div>
+      <div class="ex-card-right"><span class="ex-card-sets">4 × 10–15</span><span class="ex-toggle">▼</span></div>
+    </div>
+    <div class="ex-card-body"><p class="ex-card-desc">Four sets here vs three on Monday — Thursday is the primary core day. Full control on the way down. Momentum is wasted work.</p></div>
+  </div>
+  <div class="ex-card" onclick="toggleCard(this)">
+    <div class="ex-card-header">
+      <div class="ex-card-left"><span class="ex-card-name">Plank</span><span class="ex-card-muscle">Deep Core · Glutes</span></div>
+      <div class="ex-card-right"><span class="ex-card-sets">3 × 45–60s</span><span class="ex-toggle">▼</span></div>
+    </div>
+    <div class="ex-card-body"><p class="ex-card-desc">Reinforce the stability needed for heavy squats and deadlifts. After a hard leg session, this also serves as a focused breathing reset before leaving the gym.</p></div>
+  </div>
+  <div class="ex-card" onclick="toggleCard(this)">
+    <div class="ex-card-header">
+      <div class="ex-card-left"><span class="ex-card-name">Side Plank (each side)</span><span class="ex-card-muscle">Obliques · Lateral Core</span></div>
+      <div class="ex-card-right"><span class="ex-card-sets">2 × 30s</span><span class="ex-toggle">▼</span></div>
+    </div>
+    <div class="ex-card-body"><p class="ex-card-desc">Anti-lateral-flexion stability. Targets the obliques and quadratus lumborum — muscles that frame the waist and protect the spine under load.</p></div>
+  </div>
+  <div class="tip-box"><span class="tip-icon">!</span><span class="tip-text">Eat a real meal 90–120 minutes before this session. Squats on empty is how form breaks and injuries happen. This is your hardest session of the week — treat it that way.</span></div>
+</section>
+
+<!-- FRIDAY -->
+
+<section class="day-section" id="day-fri">
+  <div class="day-header">
+    <span class="day-number">Friday</span>
+    <div class="day-name">REST + WALK</div>
+    <span class="day-badge">Active Recovery · Pre-Metcon Reset</span>
+  </div>
+  <div class="focus-strip">Second LISS session. Identical protocol to Wednesday. Positioned before Saturday's Metcon so you arrive recovered — not fatigued, not stiff.</div>
+  <div class="cardio-block">
+    <div class="cardio-title">INCLINE TREADMILL WALK</div>
+    <div class="cardio-grid">
+      <div class="cardio-stat"><div class="cardio-stat-label">Duration</div><div class="cardio-stat-value">30–45 min</div></div>
+      <div class="cardio-stat"><div class="cardio-stat-label">Speed</div><div class="cardio-stat-value">5.5–6.5 km/h</div></div>
+      <div class="cardio-stat"><div class="cardio-stat-label">Incline</div><div class="cardio-stat-value">6–10%</div></div>
+      <div class="cardio-stat"><div class="cardio-stat-label">Target HR</div><div class="cardio-stat-value">120–135 bpm</div></div>
+      <div class="cardio-stat"><div class="cardio-stat-label">Zone</div><div class="cardio-stat-value">Zone 2 (LISS)</div></div>
+    </div>
+    <div class="cardio-why">Two LISS sessions weekly is optimal for fat loss without recovery debt. Friday's walk also manages leg-day soreness — increased blood flow speeds nutrient delivery and waste clearance. You'll feel better for Saturday's Metcon.</div>
+  </div>
+  <div class="tip-box"><span class="tip-icon">!</span><span class="tip-text">Good day for 10 minutes of light mobility after the walk — hip flexors, thoracic rotation, shoulder opening. Better range of motion on Saturday's military press starts here.</span></div>
+</section>
+
+<!-- SATURDAY -->
+
+<section class="day-section" id="day-sat">
+  <div class="day-header">
+    <span class="day-number">Saturday</span>
+    <div class="day-name">METCON</div>
+    <span class="day-badge">Full Body · Conditioning · Lactic Threshold</span>
+  </div>
+  <div class="focus-strip">Metabolic conditioning. Combines strength and high-output work to elevate EPOC — accelerating fat burn for 24–48 hours post-session. This is what cuts the physique.</div>
+
+  <div class="section-label">Strength Complex</div>
+  <div class="ex-card" onclick="toggleCard(this)">
+    <div class="ex-card-header">
+      <div class="ex-card-left"><span class="ex-card-name">Military Press</span><span class="ex-card-muscle">Shoulders · Triceps · Upper Back</span></div>
+      <div class="ex-card-right"><span class="ex-card-sets">3 × 8</span><span class="ex-toggle">▼</span></div>
+    </div>
+    <div class="ex-card-body"><p class="ex-card-desc">Strict overhead press — no leg drive. Reinforces shoulder strength from Monday. Done first while fresh, before the conditioning work degrades output.</p></div>
+  </div>
+  <div class="ex-card" onclick="toggleCard(this)">
+    <div class="ex-card-header">
+      <div class="ex-card-left"><span class="ex-card-name">DB Bent-Over Row</span><span class="ex-card-muscle">Back · Biceps · Rear Delt</span></div>
+      <div class="ex-card-right"><span class="ex-card-sets">3 × 10</span><span class="ex-toggle">▼</span></div>
+    </div>
+    <div class="ex-card-body"><p class="ex-card-desc">The pull counterpart to the press. Keeps the session balanced. Superset with military press for efficiency and heart rate elevation.</p></div>
+  </div>
+  <div class="ex-card" onclick="toggleCard(this)">
+    <div class="ex-card-header">
+      <div class="ex-card-left"><span class="ex-card-name">Dips</span><span class="ex-card-muscle">Lower Chest · Triceps · Front Delt</span></div>
+      <div class="ex-card-right"><span class="ex-card-sets">3 × 8</span><span class="ex-toggle">▼</span></div>
+    </div>
+    <div class="ex-card-body"><p class="ex-card-desc">Bodyweight pushing compound — lower chest and deep triceps. Forward lean = more chest, upright = more triceps. A battle-tested indicator of true upper-body pushing strength.</p></div>
+  </div>
+  <div class="ex-card" onclick="toggleCard(this)">
+    <div class="ex-card-header">
+      <div class="ex-card-left"><span class="ex-card-name">Chin-Ups</span><span class="ex-card-muscle">Lats · Biceps · Rear Delt</span></div>
+      <div class="ex-card-right"><span class="ex-card-sets">3 × 8</span><span class="ex-toggle">▼</span></div>
+    </div>
+    <div class="ex-card-body"><p class="ex-card-desc">Underhand grip shifts more load onto the biceps vs pull-ups. Paired with dips, creates a push/pull superset that maintains high metabolic stress through complementary movement patterns.</p></div>
+  </div>
+
+  <div class="section-label">Shoulder Accessories</div>
+  <div class="ex-card" onclick="toggleCard(this)">
+    <div class="ex-card-header">
+      <div class="ex-card-left"><span class="ex-card-name">Lateral Raise</span><span class="ex-card-muscle">Lateral Delt</span></div>
+      <div class="ex-card-right"><span class="ex-card-sets">3 × 15</span><span class="ex-toggle">▼</span></div>
+    </div>
+    <div class="ex-card-body"><p class="ex-card-desc">Second weekly lateral delt dose. The side delt responds to frequency — twice per week accelerates width. Lighter here due to accumulated fatigue; focus on the burn, not the number on the dumbbell.</p></div>
+  </div>
+  <div class="ex-card" onclick="toggleCard(this)">
+    <div class="ex-card-header">
+      <div class="ex-card-left"><span class="ex-card-name">Face Pull</span><span class="ex-card-muscle">Rear Delt · Rotator Cuff</span></div>
+      <div class="ex-card-right"><span class="ex-card-sets">3 × 15</span><span class="ex-toggle">▼</span></div>
+    </div>
+    <div class="ex-card-body"><p class="ex-card-desc">Second weekly rear delt and rotator cuff dose. After a full week of pressing and pulling, external rotation work is critical. The maintenance check for your shoulder joints before the week resets.</p></div>
+  </div>
+
+  <div class="section-label">Conditioning Finisher</div>
+  <div class="ex-card" onclick="toggleCard(this)">
+    <div class="ex-card-header">
+      <div class="ex-card-left"><span class="ex-card-name">Burpee Circuit</span><span class="ex-card-muscle">Full Body · Cardiovascular</span></div>
+      <div class="ex-card-right"><span class="ex-card-sets">4 × 30s</span><span class="ex-toggle">▼</span></div>
+    </div>
+    <div class="ex-card-body"><p class="ex-card-desc">30 seconds all-out, 20–30s rest, four rounds. Anaerobic threshold training — spikes heart rate into the red zone, creating the EPOC effect that burns calories for hours after the session ends. This is the metabolic cost that gets you lean.</p></div>
+  </div>
+  <div class="ex-card" onclick="toggleCard(this)">
+    <div class="ex-card-header">
+      <div class="ex-card-left"><span class="ex-card-name">Treadmill Finisher</span><span class="ex-card-muscle">Cardiovascular · Cooldown</span></div>
+      <div class="ex-card-right"><span class="ex-card-sets">10 min</span><span class="ex-toggle">▼</span></div>
+    </div>
+    <div class="ex-card-body"><p class="ex-card-desc">Transition from anaerobic to aerobic. First 5 minutes at moderate pace (7–8 km/h), last 5 minutes walking. Prevents blood pooling and accelerates lactate clearance. Never stop cold after burpees.</p></div>
+  </div>
+  <div class="tip-box"><span class="tip-icon">!</span><span class="tip-text">On burpees: quality over speed. A controlled, full-extension burpee with a real jump is worth 3× the sloppy half-reps. Let the 30 seconds do the work.</span></div>
+</section>
+
+<!-- SUNDAY -->
+
+<section class="day-section" id="day-sun">
+  <div class="day-header">
+    <span class="day-number">Sunday</span>
+    <div class="day-name">FULL REST</div>
+    <span class="day-badge">Recovery · Sleep · Adaptation</span>
+  </div>
+  <div class="focus-strip">Muscle is not built in the gym — it is built during recovery. Sunday is where the week's work becomes permanent adaptation. Protect it.</div>
+  <div class="cardio-block">
+    <div class="cardio-title">RECOVERY PROTOCOL</div>
+    <div class="cardio-grid">
+      <div class="cardio-stat"><div class="cardio-stat-label">Sleep</div><div class="cardio-stat-value">7–8 hrs</div></div>
+      <div class="cardio-stat"><div class="cardio-stat-label">Stretching</div><div class="cardio-stat-value">Optional · 10 min</div></div>
+      <div class="cardio-stat"><div class="cardio-stat-label">Intensity</div><div class="cardio-stat-value">Zero</div></div>
+      <div class="cardio-stat"><div class="cardio-stat-label">Protein target</div><div class="cardio-stat-value">1.8–2.2g / kg</div></div>
+    </div>
+    <div class="cardio-why">Sleep is the most powerful recovery tool available — no supplement competes. During deep sleep, growth hormone peaks and muscle protein synthesis runs at full capacity. 7–8 hours is non-negotiable at this training volume. Eat well, hydrate, and let the adaptation happen.</div>
+  </div>
+  <div class="tip-box"><span class="tip-icon">!</span><span class="tip-text">Review the week: Did you hit protein targets? Sleep well? Was there a session where form broke down? Small weekly adjustments compound into big results over time.</span></div>
+</section>
+
+<script>
+  function showDay(day, btn) {
+    document.querySelectorAll('.day-section').forEach(s => s.classList.remove('visible'));
+    document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+    document.getElementById('day-' + day).classList.add('visible');
+    btn.classList.add('active');
+    btn.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+  function toggleCard(card) {
+    card.classList.toggle('open');
+  }
+</script>
+
+</body>
+</html>
